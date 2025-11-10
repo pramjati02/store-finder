@@ -4,10 +4,19 @@ from models import models
 from schemas import schemas
 from api import api
 from database import database
+from fastapi.middleware.cors import CORSMiddleware
 
 models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"], 
+    allow_headers=["*"],
+)
 
 # Dependency: get a fresh DB session per request
 def get_db():
@@ -53,7 +62,7 @@ def find_nearby_stores(
     nearby_stores.sort(key=lambda x:x[1])
 
     # Return top 10 closest
-    return [s for s, _ in nearby_stores[:10]]
+    return [s for s, _ in nearby_stores[:20]]
 
 
 
